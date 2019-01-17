@@ -1,7 +1,11 @@
 package main
 
-import "baduk/config"
+import (
+	"tui.com/baduk/config"
+)
 
 func main() {
-	config := config.NewConfig()
+
+	config, err := config.NewConfig()
+
 }
