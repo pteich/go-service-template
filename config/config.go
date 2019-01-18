@@ -9,18 +9,26 @@ import (
 // Default port for service.
 const serviceDefaultPort = "8080"
 
+// default log level.
+const serviceDefaultLogLevel = "debug"
+
 // Environment variable name for service port.
 const servicePortEnvironmentVariable string = "SERVICE_PORT"
+
+// Environment variable name for log level.
+const serviceLogLevelEnvironmentVariable string = "SERVICE_LOGLEVEL"
 
 // AppConfig defines the Config for the App.
 type AppConfig struct {
 	Port string
+	LogLevel string
 }
 
 // NewConfig inits the Config for the App and sets default values if the Envs are not set.
 func NewConfig() (AppConfig, error) {
 	appConfig := AppConfig{
 		Port: serviceDefaultPort,
+		LogLevel: serviceDefaultLogLevel,
 	}
 
 	servicePort, set := os.LookupEnv(servicePortEnvironmentVariable)
@@ -35,6 +43,11 @@ func NewConfig() (AppConfig, error) {
 		}
 
 		appConfig.Port = servicePort
+	}
+
+	logLevel, set := os.LookupEnv(serviceLogLevelEnvironmentVariable)
+	if set {
+		appConfig.LogLevel = logLevel
 	}
 
 	return appConfig, nil
