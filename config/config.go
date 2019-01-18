@@ -18,10 +18,14 @@ const servicePortEnvironmentVariable string = "SERVICE_PORT"
 // Environment variable name for log level.
 const serviceLogLevelEnvironmentVariable string = "SERVICE_LOGLEVEL"
 
+// Environment variable name for GELF log endpoint.
+const serviceLogServerEnvironmentVariable string = "LOG_SERVER"
+
 // AppConfig defines the Config for the App.
 type AppConfig struct {
 	Port string
 	LogLevel string
+	GelfLogServer string
 }
 
 // NewConfig inits the Config for the App and sets default values if the Envs are not set.
@@ -48,6 +52,11 @@ func NewConfig() (AppConfig, error) {
 	logLevel, set := os.LookupEnv(serviceLogLevelEnvironmentVariable)
 	if set {
 		appConfig.LogLevel = logLevel
+	}
+
+	logServer, set := os.LookupEnv(serviceLogServerEnvironmentVariable)
+	if set {
+		appConfig.GelfLogServer = logServer
 	}
 
 	return appConfig, nil

@@ -18,7 +18,11 @@ func main() {
 	}
 
 	// init logger with config
-	log := logger.NewLogger(config)
+	log, err := logger.NewLogger(config)
+	if err != nil {
+		panic("could not initialize logger")
+	}
+
 	log.Info().Msg("service started")
 
 	// create main context
