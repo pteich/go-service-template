@@ -1,9 +1,10 @@
 package router
 
 import (
+	"time"
+
 	"github.com/go-chi/render"
 	"github.com/rs/zerolog"
-	"time"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -24,4 +25,3 @@ func AddMonitoringRoutes(router *chi.Mux, monitoringHandler *handler.MonitoringH
 	})
 
 }
-

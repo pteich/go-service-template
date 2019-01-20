@@ -10,10 +10,10 @@ import (
 
 	"github.com/go-chi/chi"
 	"tui.com/baduk/config"
+	"tui.com/baduk/greeter"
 	"tui.com/baduk/handler"
 	"tui.com/baduk/logger"
 	"tui.com/baduk/router"
-	"tui.com/baduk/greeter"
 )
 
 var Version string

@@ -2,12 +2,13 @@ package handler
 
 import (
 	"context"
-	"github.com/go-chi/chi"
-	"github.com/golang/mock/gomock"
-	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/go-chi/chi"
+	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
 	"tui.com/baduk/greeter"
 )
 
