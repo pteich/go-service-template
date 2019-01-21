@@ -1,8 +1,7 @@
 package handler
 
 import (
-	"context"
-	"io/ioutil"
+	"net/http"
 	"net/http/httptest"
 	"testing"
 
@@ -14,33 +13,26 @@ import (
 
 func TestApiHandler_GetName(t *testing.T) {
 
-	// init mock controller
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
-	// init mock and set expectations
+	// set expectations for service calls
 	greetingService := greeter.NewMockGreeter(mockCtrl)
 	greetingService.EXPECT().SayHello("World").Return("Hello World!").Times(1)
 
-	// init handler with mock
 	handler := NewApiHandler(greetingService)
 
-	// create http request with chi context
-	w := httptest.NewRecorder()
-	r := httptest.NewRequest("GET", "/greet/World", nil)
-	rctx := chi.NewRouteContext()
-	rctx.URLParams.Add("name", "World")
-	r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, rctx))
+	mockRouter := chi.NewRouter()
+	mockRouter.Get("/greet/{name}", handler.GetName)
 
-	// execute handler
-	handler.GetName(w, r)
-
-	// check results
-	resp := w.Result()
-	body, err := ioutil.ReadAll(resp.Body)
+	req, err := http.NewRequest("GET", "/greet/World", nil)
 	assert.NoError(t, err)
-	assert.Equal(t, 200, resp.StatusCode)
-	assert.Equal(t, "text/plain; charset=utf-8", resp.Header.Get("content-type"))
-	assert.Equal(t, "Hello World!", string(body))
+
+	respRecorder := httptest.NewRecorder()
+	mockRouter.ServeHTTP(respRecorder, req)
+
+	assert.Equal(t, 200, respRecorder.Code)
+	assert.Equal(t, "text/plain; charset=utf-8", respRecorder.Header().Get("content-type"))
+	assert.Equal(t, "Hello World!", respRecorder.Body.String())
 
 }

@@ -47,7 +47,7 @@ func main() {
 	// create main context
 	ctx, done := context.WithCancel(context.Background())
 
-	// handle common signals, could be extended to allow graceful restarts
+	// handle common signals, could be extended to allow graceful restarts and finish background jobs
 	signalChannel := make(chan os.Signal, 1)
 	signal.Notify(signalChannel, os.Interrupt, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 	go func() {
