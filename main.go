@@ -21,16 +21,13 @@ var Version string
 func main() {
 
 	// initialize config
-	config, err := config.NewConfig()
+	appConfig, err := config.NewConfig()
 	if err != nil {
 		panic("could not read config")
 	}
 
 	// init logger with config
-	log, err := logger.NewLogger(config)
-	if err != nil {
-		panic("could not initialize logger")
-	}
+	log := logger.NewLogger(appConfig)
 
 	// Init services
 	greetingService := greeter.NewGreet()
@@ -56,20 +53,26 @@ func main() {
 			done()
 		case syscall.SIGTERM:
 			done()
+		case syscall.SIGINT:
+			done()
+		case syscall.SIGHUP:
+			done()
+		case syscall.SIGQUIT:
+			done()
 		}
 	}()
 
 	// Start server
 	srv := &http.Server{
 		Handler: chiRouter,
-		Addr:    fmt.Sprintf(":%s", config.Port),
+		Addr:    fmt.Sprintf(":%s", appConfig.Port),
 	}
 
 	go srv.ListenAndServe()
 
-	log.Info().Str("port", config.Port).Msg("service started")
+	log.WithField("port", appConfig.Port).Info("service started")
 
 	// wait until done
 	<-ctx.Done()
-	log.Info().Msg("service stopped")
+	log.Info("service stopped")
 }

@@ -1,43 +1,35 @@
 package logger
 
 import (
-	"github.com/halink0803/zerolog-graylog-hook/graylog"
-	"github.com/pkg/errors"
-	"github.com/rs/zerolog"
-	"os"
+	"github.com/gemnasium/logrus-graylog-hook/v3"
+	"github.com/sirupsen/logrus"
 	"tui.com/baduk/config"
 )
 
 // NewLogger creates a new logger instance based on a given config
-func NewLogger(appConfig config.AppConfig) (zerolog.Logger, error) {
+func NewLogger(appConfig config.AppConfig) *logrus.Entry {
 
-	// parse loglevel from string and set it globally
-	zerologlevel, err := zerolog.ParseLevel(appConfig.LogLevel)
+	// parse loglevel from config string and set it globally
+	loglevel, err := logrus.ParseLevel(appConfig.LogLevel)
 	if err != nil {
-		zerologlevel = zerolog.DebugLevel
+		loglevel = logrus.DebugLevel
 	}
+	logrus.SetLevel(loglevel)
 
-	zerolog.SetGlobalLevel(zerologlevel)
-
-	// set up console writer
-	output := zerolog.ConsoleWriter{
-		Out: os.Stderr,
-		NoColor: false,
+	// enable timestamp in console output
+	formatter := &logrus.TextFormatter{
+		FullTimestamp: true,
 	}
+	logrus.SetFormatter(formatter)
 
-	// create new logger with timestamp
-	logger := zerolog.New(output).With().Timestamp().Str("service", config.ServiceName).Logger()
+	logger := logrus.WithField("service", config.ServiceName)
 
 	// check if GELF server is configured and attach hook
 	if appConfig.GelfLogServer != "" {
 
-		hook, err := graylog.NewGraylogHook(appConfig.GelfLogServer)
-		if err != nil {
-			return logger, errors.Wrap(err, "could not add GELF hook")
-		}
-
-		logger.Hook(hook)
+		hook := graylog.NewGraylogHook(appConfig.GelfLogServer, map[string]interface{}{})
+		logrus.AddHook(hook)
 	}
 
-	return logger, nil
+	return logger
 }
