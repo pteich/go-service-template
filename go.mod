@@ -1,4 +1,4 @@
-module github.com/pteich/baduk
+module github.com/pteich/go-service-template
 
 require (
 	github.com/gemnasium/logrus-graylog-hook/v3 v3.0.2
