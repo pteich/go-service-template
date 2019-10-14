@@ -6,7 +6,7 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
-	"tui.com/baduk/handler"
+	"github.com/pteich/go-service-template/handler"
 )
 
 func AddApiRoutes(router *chi.Mux, apiHandler *handler.ApiHandler, logger *logrus.Entry) {

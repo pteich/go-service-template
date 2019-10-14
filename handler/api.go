@@ -3,8 +3,8 @@ package handler
 import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
+	"github.com/pteich/go-service-template/greeter"
 	"net/http"
-	"tui.com/baduk/greeter"
 )
 
 // ApiHandler is the place for all API routes

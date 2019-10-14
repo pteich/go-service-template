@@ -7,8 +7,8 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/golang/mock/gomock"
+	"github.com/pteich/go-service-template/greeter"
 	"github.com/stretchr/testify/assert"
-	"tui.com/baduk/greeter"
 )
 
 func TestApiHandler_GetName(t *testing.T) {

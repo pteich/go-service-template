@@ -2,8 +2,8 @@ package logger
 
 import (
 	"github.com/gemnasium/logrus-graylog-hook/v3"
+	"github.com/pteich/go-service-template/config"
 	"github.com/sirupsen/logrus"
-	"tui.com/baduk/config"
 )
 
 // NewLogger creates a new logger instance based on a given config

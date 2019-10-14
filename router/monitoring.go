@@ -8,7 +8,7 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/render"
 
-	"tui.com/baduk/handler"
+	"github.com/pteich/go-service-template/handler"
 )
 
 func AddMonitoringRoutes(router *chi.Mux, monitoringHandler *handler.MonitoringHandler, logger *logrus.Entry) {

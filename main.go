@@ -9,11 +9,11 @@ import (
 	"syscall"
 
 	"github.com/go-chi/chi"
-	"tui.com/baduk/config"
-	"tui.com/baduk/greeter"
-	"tui.com/baduk/handler"
-	"tui.com/baduk/logger"
-	"tui.com/baduk/router"
+	"github.com/pteich/go-service-template/config"
+	"github.com/pteich/go-service-template/greeter"
+	"github.com/pteich/go-service-template/handler"
+	"github.com/pteich/go-service-template/logger"
+	"github.com/pteich/go-service-template/router"
 )
 
 var Version string
