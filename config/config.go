@@ -1,63 +1,35 @@
 package config
 
 import (
-	"github.com/pkg/errors"
-	"os"
-	"strconv"
+	"fmt"
 )
 
-// Default port for service.
-const serviceDefaultPort = "8080"
-
-// default log level.
-const serviceDefaultLogLevel = "debug"
-
-// Environment variable name for service port.
-const servicePortEnvironmentVariable string = "SERVICE_PORT"
-
-// Environment variable name for log level.
-const serviceLogLevelEnvironmentVariable string = "SERVICE_LOGLEVEL"
-
-// Environment variable name for GELF log endpoint.
-const serviceLogServerEnvironmentVariable string = "LOG_SERVER"
-
-// AppConfig defines the Config for the App.
-type AppConfig struct {
-	Port string
-	LogLevel string
-	GelfLogServer string
+// Config holds all config values, env variable names are defined as tags
+type Config struct {
+	LogLevel      string `env:"LOG_LEVEL"`
+	ListenAddr    string `env:"LISTEN_ADDR"`
+	GraylogServer string `env:"GRAYLOG_SERVER"`
+	JwtSignKey    string `env:"JWT_SIGN_KEY"`
+	LogJson       bool   `env:"LOG_JSON"`
+	Version       string
 }
 
-// NewConfig inits the Config for the App and sets default values if the Envs are not set.
-func NewConfig() (AppConfig, error) {
-	appConfig := AppConfig{
-		Port: serviceDefaultPort,
-		LogLevel: serviceDefaultLogLevel,
+// New returns a new config with defaults and parsed environement variables
+func New() Config {
+
+	config := Config{
+		LogLevel:   "debug",
+		ListenAddr: ":8000",
+		JwtSignKey: "abc",
+		LogJson:    true,
 	}
 
-	servicePort, set := os.LookupEnv(servicePortEnvironmentVariable)
-	if set {
-		portNumeric, err := strconv.Atoi(servicePort)
-		if err != nil {
-			return appConfig, errors.Wrap(err, "could not initialize config")
-		}
+	ParseEnv(&config)
 
-		if portNumeric < 1024 || portNumeric > 65536 {
-			return appConfig, errors.New("port value not valid")
-		}
+	return config
+}
 
-		appConfig.Port = servicePort
-	}
-
-	logLevel, set := os.LookupEnv(serviceLogLevelEnvironmentVariable)
-	if set {
-		appConfig.LogLevel = logLevel
-	}
-
-	logServer, set := os.LookupEnv(serviceLogServerEnvironmentVariable)
-	if set {
-		appConfig.GelfLogServer = logServer
-	}
-
-	return appConfig, nil
+// String returns a string version of the config struct
+func (s *Config) String() string {
+	return fmt.Sprintf("%#v", s)
 }

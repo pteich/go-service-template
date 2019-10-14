@@ -1,3 +1,3 @@
 package config
 
-const ServiceName string = "baduk"
+const ServiceName string = "go-service"

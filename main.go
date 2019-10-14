@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
@@ -21,10 +20,7 @@ var Version string
 func main() {
 
 	// initialize config
-	appConfig, err := config.NewConfig()
-	if err != nil {
-		panic("could not read config")
-	}
+	appConfig := config.New()
 
 	// init logger with config
 	log := logger.NewLogger(appConfig)
@@ -65,12 +61,12 @@ func main() {
 	// Start server
 	srv := &http.Server{
 		Handler: chiRouter,
-		Addr:    fmt.Sprintf(":%s", appConfig.Port),
+		Addr:    appConfig.ListenAddr,
 	}
 
 	go srv.ListenAndServe()
 
-	log.WithField("port", appConfig.Port).Info("service started")
+	log.WithField("config", appConfig.String()).Info("service started")
 
 	// wait until done
 	<-ctx.Done()

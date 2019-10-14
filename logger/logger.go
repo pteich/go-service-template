@@ -7,7 +7,7 @@ import (
 )
 
 // NewLogger creates a new logger instance based on a given config
-func NewLogger(appConfig config.AppConfig) *logrus.Entry {
+func NewLogger(appConfig config.Config) *logrus.Entry {
 
 	// parse loglevel from config string and set it globally
 	loglevel, err := logrus.ParseLevel(appConfig.LogLevel)
@@ -25,9 +25,9 @@ func NewLogger(appConfig config.AppConfig) *logrus.Entry {
 	logger := logrus.WithField("service", config.ServiceName)
 
 	// check if GELF server is configured and attach hook
-	if appConfig.GelfLogServer != "" {
+	if appConfig.GraylogServer != "" {
 
-		hook := graylog.NewGraylogHook(appConfig.GelfLogServer, map[string]interface{}{})
+		hook := graylog.NewGraylogHook(appConfig.GraylogServer, map[string]interface{}{})
 		logrus.AddHook(hook)
 	}
 
