@@ -1,4 +1,4 @@
-module tui.com/baduk
+module github.com/pteich
 
 require (
 	github.com/gemnasium/logrus-graylog-hook/v3 v3.0.2
