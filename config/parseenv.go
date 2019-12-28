@@ -9,8 +9,7 @@ import (
 )
 
 // ParseEnv enriches value of a given struct from values of env
-func ParseEnv(c interface{}) {
-
+func ParseEnv(c interface{}) error {
 	// get env vars by use of reflection and struct tags
 	valueRef := reflect.ValueOf(c)
 	confType := valueRef.Elem().Type()
@@ -37,10 +36,10 @@ func ParseEnv(c interface{}) {
 					valueRef.Elem().FieldByName(field.Name).SetInt(value)
 				}
 			default:
-				panic(fmt.Sprintf("config env type %s not implemented", field.Type.Name()))
+				return fmt.Errorf("config env type %s not implemented", field.Type.Name())
 			}
 		}
-
 	}
 
+	return nil
 }

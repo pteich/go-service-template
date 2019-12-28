@@ -30,10 +30,9 @@ func TestParseEnv(t *testing.T) {
 
 	conf := TestConfig{}
 
-	ParseEnv(&conf)
-
+	err := ParseEnv(&conf)
+	assert.NoError(t, err)
 	assert.Equal(t, confExpected, conf)
-
 }
 
 func TestParseEnvDefaults(t *testing.T) {

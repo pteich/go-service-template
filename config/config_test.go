@@ -8,52 +8,27 @@ import (
 
 func TestNewConfig(t *testing.T) {
 
-	testConfig, err := NewConfig()
-
+	testConfig, err := New()
 	assert.NoError(t, err)
-	assert.Equal(t, "8080", testConfig.Port, "Port should be string of 8080")
-	assert.IsType(t, "8080", testConfig.Port)
+	assert.Equal(t, ":8000", testConfig.ListenAddr)
+	assert.IsType(t, ":8000", testConfig.ListenAddr)
 	assert.Equal(t, "debug", testConfig.LogLevel)
-	assert.Equal(t, "", testConfig.GelfLogServer)
+	assert.True(t, testConfig.LogOutputConsole)
 }
 
 func TestNewConfigWithEnvValues(t *testing.T) {
 
-	port := "9000"
+	listenAddr := "9000"
 	logLevel := "info"
-	gelfEndpoint := "udp://127.0.0.1:9000"
 
-	os.Setenv("SERVICE_PORT", port)
-	os.Setenv("SERVICE_LOGLEVEL", logLevel)
-	os.Setenv("LOG_SERVER", gelfEndpoint)
+	os.Setenv("LISTEN_ADDR", listenAddr)
+	os.Setenv("LOG_LEVEL", logLevel)
+	os.Setenv("LOG_OUTPUT_CONSOLE", "false")
 
-	testConfig, err := NewConfig()
-
+	testConfig, err := New()
 	assert.NoError(t, err)
-	assert.Equal(t, port, testConfig.Port)
+	assert.Equal(t, listenAddr, testConfig.ListenAddr)
 	assert.Equal(t, logLevel, testConfig.LogLevel)
-	assert.Equal(t, gelfEndpoint, testConfig.GelfLogServer)
+	assert.False(t, testConfig.LogOutputConsole)
 
-}
-
-func TestNewConfigWithInvalidPortValue(t *testing.T) {
-
-	port := "22"
-	os.Setenv("SERVICE_PORT", port)
-
-	_, err := NewConfig()
-
-	assert.Error(t, err)
-
-	port = "90000"
-	os.Setenv("SERVICE_PORT", port)
-
-	_, err = NewConfig()
-	assert.Error(t, err)
-
-	port = "ABCDEFG"
-	os.Setenv("SERVICE_PORT", port)
-
-	_, err = NewConfig()
-	assert.Error(t, err)
 }

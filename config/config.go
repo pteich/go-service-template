@@ -12,8 +12,8 @@ type Config struct {
 	Version          string
 }
 
-// New returns a new config with defaults and parsed environement variables
-func New() Config {
+// New returns a new config with defaults and parsed environment variables
+func New() (Config, error) {
 
 	config := Config{
 		LogLevel:         "debug",
@@ -21,12 +21,15 @@ func New() Config {
 		LogOutputConsole: true,
 	}
 
-	ParseEnv(&config)
+	err := ParseEnv(&config)
+	if err != nil {
+		return config, err
+	}
 
-	return config
+	return config, nil
 }
 
 // String returns a string version of the config struct
-func (s *Config) String() string {
+func (s Config) String() string {
 	return fmt.Sprintf("%#v", s)
 }

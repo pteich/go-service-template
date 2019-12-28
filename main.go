@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
@@ -19,11 +21,17 @@ var Version string
 
 func main() {
 
+	var err error
+
 	// initialize config
-	appConfig := config.New()
+	cfg, err := config.New()
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(2)
+	}
 
 	// init logger with config
-	log := logger.New(logger.WithLogLevel(appConfig.LogLevel), logger.WithConsoleOutput(appConfig.LogOutputConsole))
+	log := logger.New(logger.WithLogLevel(cfg.LogLevel), logger.WithConsoleOutput(cfg.LogOutputConsole))
 
 	// Init services
 	greetingService := greeter.NewGreet()
@@ -61,14 +69,26 @@ func main() {
 	// Start server
 	srv := &http.Server{
 		Handler: chiRouter,
-		Addr:    appConfig.ListenAddr,
+		Addr:    cfg.ListenAddr,
 	}
 
-	go srv.ListenAndServe()
+	go func() {
+		err := srv.ListenAndServe()
+		if err != nil && !errors.Is(err, http.ErrServerClosed) {
+			log.Fatal().Err(err).Msg("server not started")
+		}
+	}()
 
-	log.Info().Str("config", appConfig.String()).Msg("service started")
+	log.Info().Str("config", cfg.String()).Msg("service started")
 
 	// wait until done
 	<-ctx.Done()
+
+	// shutdown
+	err = srv.Close()
+	if err != nil {
+		log.Error().Err(err).Msg("error closing server")
+	}
+
 	log.Info().Msg("service stopped")
 }
