@@ -2,10 +2,6 @@ package greeter
 
 import "fmt"
 
-type Greeter interface {
-	SayHello(name string) string
-}
-
 type Greet struct {
 }
 

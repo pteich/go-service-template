@@ -21,7 +21,7 @@ type Logger struct {
 }
 
 // New is the constructor of the logger
-func New(opts ...Option) Logger {
+func New(opts ...Option) *Logger {
 
 	_, filename, _, _ := runtime.Caller(0)
 	config := Config{
@@ -45,7 +45,7 @@ func New(opts ...Option) Logger {
 		logDest = zerolog.ConsoleWriter{Out: logDest, TimeFormat: time.RFC3339}
 	}
 
-	return Logger{
+	return &Logger{
 		Logger: zerolog.New(logDest).With().Timestamp().Str("service", config.serviceName).Logger(),
 	}
 }

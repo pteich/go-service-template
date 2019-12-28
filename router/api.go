@@ -1,15 +1,17 @@
 package router
 
 import (
-	"github.com/sirupsen/logrus"
 	"time"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+
 	"github.com/pteich/go-service-template/handler"
+	"github.com/pteich/go-service-template/logger"
 )
 
-func AddApiRoutes(router *chi.Mux, apiHandler *handler.ApiHandler, logger *logrus.Entry) {
+// AddApiRoutes sets routes for API access
+func AddApiRoutes(router *chi.Mux, apiHandler *handler.ApiHandler, logger *logger.Logger) {
 
 	router.Group(func(r chi.Router) {
 		r.Use(middleware.Recoverer)

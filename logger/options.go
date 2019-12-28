@@ -8,7 +8,7 @@ func WithLogLevel(logLevel string) Option {
 	}
 }
 
-func WithLogConsole(logConsole bool) Option {
+func WithConsoleOutput(logConsole bool) Option {
 	return func(c *Config) {
 		c.logConsole = logConsole
 	}

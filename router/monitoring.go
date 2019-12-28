@@ -1,7 +1,6 @@
 package router
 
 import (
-	"github.com/sirupsen/logrus"
 	"time"
 
 	"github.com/go-chi/chi"
@@ -9,9 +8,11 @@ import (
 	"github.com/go-chi/render"
 
 	"github.com/pteich/go-service-template/handler"
+	"github.com/pteich/go-service-template/logger"
 )
 
-func AddMonitoringRoutes(router *chi.Mux, monitoringHandler *handler.MonitoringHandler, logger *logrus.Entry) {
+// AddMonitoringRoutes sets routes for health check and monitoring
+func AddMonitoringRoutes(router *chi.Mux, monitoringHandler *handler.MonitoringHandler, logger *logger.Logger) {
 
 	router.Group(func(r chi.Router) {
 		r.Use(middleware.Recoverer)

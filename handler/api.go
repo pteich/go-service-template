@@ -1,19 +1,23 @@
 package handler
 
 import (
+	"net/http"
+
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
-	"github.com/pteich/go-service-template/greeter"
-	"net/http"
 )
+
+type Greeter interface {
+	SayHello(name string) string
+}
 
 // ApiHandler is the place for all API routes
 type ApiHandler struct {
-	greeter greeter.Greeter
+	greeter Greeter
 }
 
 // NewApiHandler returns a new ApiHandler
-func NewApiHandler(greeter greeter.Greeter) *ApiHandler {
+func NewApiHandler(greeter Greeter) *ApiHandler {
 	return &ApiHandler{
 		greeter: greeter,
 	}

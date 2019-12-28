@@ -23,7 +23,7 @@ func main() {
 	appConfig := config.New()
 
 	// init logger with config
-	log := logger.NewLogger(appConfig)
+	log := logger.New(logger.WithLogLevel(appConfig.LogLevel), logger.WithConsoleOutput(appConfig.LogOutputConsole))
 
 	// Init services
 	greetingService := greeter.NewGreet()
@@ -42,8 +42,10 @@ func main() {
 
 	// handle common signals, could be extended to allow graceful restarts and finish background jobs
 	signalChannel := make(chan os.Signal, 1)
-	signal.Notify(signalChannel, os.Interrupt, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
+	signal.Notify(signalChannel, os.Interrupt, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM)
 	go func() {
+		// in case of any signal just cancel the main context
+		// could be a different reaction for some signals e.g. reload on sighup
 		switch <-signalChannel {
 		case os.Interrupt:
 			done()
@@ -52,8 +54,6 @@ func main() {
 		case syscall.SIGINT:
 			done()
 		case syscall.SIGHUP:
-			done()
-		case syscall.SIGQUIT:
 			done()
 		}
 	}()
@@ -66,9 +66,9 @@ func main() {
 
 	go srv.ListenAndServe()
 
-	log.WithField("config", appConfig.String()).Info("service started")
+	log.Info().Str("config", appConfig.String()).Msg("service started")
 
 	// wait until done
 	<-ctx.Done()
-	log.Info("service stopped")
+	log.Info().Msg("service stopped")
 }
