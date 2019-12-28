@@ -1,35 +1,55 @@
 package logger
 
 import (
-	"github.com/gemnasium/logrus-graylog-hook/v3"
-	"github.com/pteich/go-service-template/config"
-	"github.com/sirupsen/logrus"
+	"io"
+	"os"
+	"runtime"
+	"time"
+
+	"github.com/rs/zerolog"
 )
 
-// NewLogger creates a new logger instance based on a given config
-func NewLogger(appConfig config.Config) *logrus.Entry {
+type Config struct {
+	logLevel    string
+	logConsole  bool
+	serviceName string
+}
 
-	// parse loglevel from config string and set it globally
-	loglevel, err := logrus.ParseLevel(appConfig.LogLevel)
-	if err != nil {
-		loglevel = logrus.DebugLevel
-	}
-	logrus.SetLevel(loglevel)
+// Logger represents a logger
+type Logger struct {
+	zerolog.Logger
+}
 
-	// enable timestamp in console output
-	formatter := &logrus.TextFormatter{
-		FullTimestamp: true,
-	}
-	logrus.SetFormatter(formatter)
+// New is the constructor of the logger
+func New(opts ...Option) Logger {
 
-	logger := logrus.WithField("service", config.ServiceName)
-
-	// check if GELF server is configured and attach hook
-	if appConfig.GraylogServer != "" {
-
-		hook := graylog.NewGraylogHook(appConfig.GraylogServer, map[string]interface{}{})
-		logrus.AddHook(hook)
+	_, filename, _, _ := runtime.Caller(0)
+	config := Config{
+		logLevel:    "debug",
+		logConsole:  true,
+		serviceName: filename,
 	}
 
-	return logger
+	for _, opt := range opts {
+		opt(&config)
+	}
+
+	zerologlevel, err := zerolog.ParseLevel(config.logLevel)
+	if err == nil {
+		zerolog.SetGlobalLevel(zerologlevel)
+	}
+
+	var logDest io.Writer = os.Stdout
+
+	if config.logConsole {
+		logDest = zerolog.ConsoleWriter{Out: logDest, TimeFormat: time.RFC3339}
+	}
+
+	return Logger{
+		Logger: zerolog.New(logDest).With().Timestamp().Str("service", config.serviceName).Logger(),
+	}
+}
+
+func NewFromZerolog(logger zerolog.Logger) Logger {
+	return Logger{logger}
 }
